@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.example.demo.dao.UserMapper">
+    <resultMap id="BaseResultMap" type="com.example.demo.domain.User">
+		<result column="id" property="id" />
+		<result column="USERID" property="userId" />
+		<result column="USRNAM" property="usrNam" />
+		<result column="AGE" property="age" />
+		<result column="BIRTH" property="birth" />
+		<result column="ADDRESS" property="address" />
+		<result column="SEX" property="sex" />
+		<result column="USRGJ" property="usrGj" />
+		<result column="PASSWORD" property="password" />
+	</resultMap>
+	
+	<select id="list" resultMap="BaseResultMap" parameterType="Map">
+		select * 
+		from vue_usr 
+	</select>
+	
+	<insert id="add" parameterType="Map">
+	  insert into vue_usr(USERID,USRNAM,AGE,BIRTH,ADDRESS,SEX) 
+	  values(#{userId},#{usrNam},#{age},#{birth},#{address},#{sex})
+	</insert>
+</mapper>

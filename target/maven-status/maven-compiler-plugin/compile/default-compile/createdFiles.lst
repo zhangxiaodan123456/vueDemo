@@ -1,0 +1,16 @@
+com\example\demo\DemoApplication.class
+com\example\demo\service\LoginInfoService.class
+com\example\demo\controller\DemoController.class
+com\example\demo\controller\CityRestController.class
+com\example\demo\service\impl\LoginInfoServiceImpl.class
+com\example\demo\service\IpLogService.class
+com\example\demo\domain\LoginInfo.class
+com\example\demo\dao\CityDao.class
+com\example\demo\dao\IplogMapper.class
+com\example\demo\service\CityService.class
+com\example\demo\service\impl\CityServiceImpl.class
+com\example\demo\service\impl\RedisService.class
+com\example\demo\service\impl\IpLogServiceImpl.class
+com\example\demo\dao\LoginInfoMapper.class
+com\example\demo\domain\City.class
+com\example\demo\domain\Iplog.class
