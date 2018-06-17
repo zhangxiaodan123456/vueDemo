@@ -1,7 +1,6 @@
 package com.example.demo.controller;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -9,16 +8,23 @@ import java.util.Map;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.web.PageableArgumentResolver;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.example.demo.domain.User;
 import com.example.demo.service.UserService;
+import com.example.demo.util.PageBean;
 import com.example.demo.util.TokenUtil;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
+
+
 
 @RestController  
 @RequestMapping("/user")
@@ -48,17 +54,21 @@ public class UsrController {
 	@CrossOrigin(origins="*")//允许跨域请求  
     @RequestMapping(value="/getUserList",method=RequestMethod.POST)  
     public JSONObject getUserList(@RequestBody Map<String,String> m,HttpServletResponse response) throws IOException, InterruptedException{ 
-		Map map=new HashMap<String,Object>();
-		List<User> list= userService.list(map);
-		for(User u:list) 
-		{
-			System.out.println(u.toString());
-		}
 		Map mp=new HashMap<String,String>();
 		mp.put("en", "英文");
 		mp.put("ch", "中国");
-        map.put("total", list.size());
-        map.put("users", list);
+		String usrNam=null==m.get("usrNam")?"":m.get("usrNam").trim();
+ 		String usrId=null==m.get("userId")?"":m.get("userId").trim();
+ 		Integer page=null==m.get("page")?0:Integer.parseInt(m.get("page").trim());
+ 		Integer pageSize=null==m.get("pageSize")?10:Integer.parseInt(m.get("pageSize").trim());
+		Map mapParam=new HashMap<String,Object>();
+		mapParam.put("usrNam", usrNam);
+		mapParam.put("userId", usrId);
+		PageHelper.startPage(page, pageSize);
+		List<User> list= userService.list(mapParam);
+		PageInfo<User> pageInfo = new PageInfo<User>(list);
+		Map map=new HashMap<String,Object>();
+        map.put("users", pageInfo);
         map.put("gj", mp);
         String str=net.sf.json.JSONSerializer.toJSON(list).toString();
         JSONObject r = new JSONObject(); 
@@ -69,35 +79,84 @@ public class UsrController {
 	@CrossOrigin(origins="*")//允许跨域请求  
     @RequestMapping(value="/removeUser",method=RequestMethod.POST)  
     public JSONObject removeUser(@RequestBody Map<String,String> m,HttpServletResponse response) throws IOException{ 
-		System.out.println("ddd");
-		System.out.println(m.get("id"));
+		String code="";
+		String id=null==m.get("id")?"":m.get("id").trim();
+		try {
+    		userService.delete(id);
+    		code="200";
+		} catch (Exception e) {
+			e.printStackTrace();
+			code="error";
+		}
         JSONObject r = new JSONObject(); 
-        r.put("code", "200");
+        r.put("code", code);
         return r;
     }
 	
 	
 	@CrossOrigin(origins="*")//允许跨域请求  
-    @RequestMapping(value="/getEdit",method=RequestMethod.POST)  
-    public JSONObject getEdit(@RequestBody Map<String,String> m,HttpServletResponse response) throws IOException{ 
-		System.out.println(m.get("id"));
-		Map map=new HashMap<>();
-    	User user=new User();
-    	
-        map.put("user", user);
+    @RequestMapping(value="/editUser",method=RequestMethod.POST)  
+    public JSONObject editUser(@RequestBody Map<String,String> m,HttpServletResponse response) throws IOException{ 
+		System.out.println(m.toString());
+		String code="";
+		try {
+    		userService.edit(m);
+    		code="200";
+		} catch (Exception e) {
+			e.printStackTrace();
+			code="error";
+		}
         JSONObject r = new JSONObject(); 
-        r.put("data", map);
+        r.put("code", code);
         return r;
     }
 	
 	
 	@CrossOrigin(origins="*")//允许跨域请求  
     @RequestMapping(value="/addUser",method=RequestMethod.POST)  
-    public JSONObject addUser(User user,@RequestBody Map<String,String> m,HttpServletResponse response) throws IOException{ 
-		userService.add(m);
-		System.out.println(m.toString());
-        JSONObject r = new JSONObject(); 
-        r.put("code", "success");
-        return r;
+    public JSONObject addUser(@RequestBody Map<String,String> m,HttpServletResponse response) throws IOException{ 
+		String 	code="";
+		String imgUrl="";
+		try{
+			String file=m.get("imgUrl");
+			System.out.println(file);
+			/*
+			net.sf.json.JSONArray json=net.sf.json.JSONArray.fromObject(file);
+			if(json.length()>0){
+				  for(int i=0;i<json.length();i++){
+				    net.sf.json.JSONObject job = json.getJSONObject(i);  // 遍历 jsonarray 数组，把每一个对象转成 json 对象
+				    imgUrl+=job.getString("url")+",";
+				  }
+				  imgUrl=imgUrl.substring(0, imgUrl.length()-1);
+				  m.put("imgUrl", imgUrl);
+			}*/
+			m.put("userId", "P033");
+		  //  userService.add(m);
+			code="200";
+		} catch (Exception e) {
+			e.printStackTrace();
+			code="error";
+		}
+		    JSONObject r = new JSONObject(); 
+		    r.put("code", code);
+		    return r;
     }
+	
+	@CrossOrigin(origins="*")//允许跨域请求  
+    @RequestMapping(value="/batchRemoveUser",method=RequestMethod.POST)  
+    public JSONObject batchRemoveUser(User user,@RequestBody Map<String,String> m,HttpServletResponse response) throws IOException{ 
+		String code="";
+		String id=null==m.get("ids")?"":m.get("ids").trim();
+		System.out.println(id);
+		try {
+    	//	userService.delete(id);
+    		code="200";
+		} catch (Exception e) {
+			e.printStackTrace();
+			code="error";
+		}
+        JSONObject r = new JSONObject(); 
+        r.put("code", code);
+        return r;
+	}	
 }

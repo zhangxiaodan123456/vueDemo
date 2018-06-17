@@ -15,4 +15,6 @@ import com.example.demo.domain.User;
 public interface UserService {
 	List<User> list(Map map);
 	public void add(Map map);
+	public void edit(Map map);
+	public void delete(String id);
 }

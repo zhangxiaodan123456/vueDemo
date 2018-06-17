@@ -11,15 +11,34 @@
 		<result column="SEX" property="sex" />
 		<result column="USRGJ" property="usrGj" />
 		<result column="PASSWORD" property="password" />
+		<result column="IMGURL" property="imgUrl" />
 	</resultMap>
 	
 	<select id="list" resultMap="BaseResultMap" parameterType="Map">
-		select * 
-		from vue_usr 
+		select * from vue_usr where 1=1
+		<if test="usrNam!=null and ''!=usrNam">
+		   and USRNAM like concat('%',#{usrNam},'%') 
+		</if>
+		<if test="userId!=null and ''!=userId">
+		  and USERID like concat('%',#{userId},'%') 
+		</if>
 	</select>
 	
+	<update id="edit" parameterType="Map">
+	 update vue_usr set USRNAM=#{usrNam} ,
+	  ADDRESS=#{address},
+	  SEX=#{sex},
+	  age=#{age},
+	  USRGJ=#{usrGj},
+	  BIRTH=#{birth} where id=#{id}
+	</update>
+	
+	<delete id="delete" parameterType="String">
+	  delete from vue_usr where id=#{id}
+	</delete>
+	
 	<insert id="add" parameterType="Map">
-	  insert into vue_usr(USERID,USRNAM,AGE,BIRTH,ADDRESS,SEX) 
-	  values(#{userId},#{usrNam},#{age},#{birth},#{address},#{sex})
+	  insert into vue_usr(USERID,USRNAM,AGE,BIRTH,ADDRESS,SEX,USRGJ,IMGURL) 
+	  values(#{userId},#{usrNam},#{age},#{birth},#{address},#{sex},#{usrGj},#{imgUrl})
 	</insert>
 </mapper>

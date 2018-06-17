@@ -28,4 +28,12 @@ public class UserServiceImpl implements UserService{
 	public void add(Map map) {
 		userDao.add(map);
 	}
+	
+	public void edit(Map map){
+		userDao.edit(map);
+	}
+	
+	public void delete(String id){
+		userDao.delete(id);
+	}
 }
